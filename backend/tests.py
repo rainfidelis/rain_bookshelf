@@ -50,6 +50,25 @@ class BookTestCase(unittest.TestCase):
         self.assertEqual(data['message'], "resource not found")
         self.assertFalse(data['success'])
 
+    def test_search_function(self):
+        res = self.client().get('/books/search?search=anansi')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertTrue(data['books'])
+        self.assertTrue(data['total_books'])
+
+    def test_search_function_empty_result(self):
+        res = self.client().get('/books/search?search=ra')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(data['success'])
+        self.assertEqual(len(data['books']), 0)
+        self.assertEqual(data['total_books'], 0)
+
+
     def test_update_book_rating(self):
         res = self.client().patch('/books/4', json={'rating': 2})
         data = json.loads(res.data)
@@ -65,6 +84,8 @@ class BookTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 400)
         self.assertFalse(data['success'])
+        self.assertEqual(data['message'], 'bad request')
+
 
     def test_create_book(self):
         res = self.client().post('/books', json=self.new_book)

@@ -1,3 +1,4 @@
+import re
 from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -108,22 +109,50 @@ def create_app(test_config=None):
         title = body.get("title", None)
         author = body.get("author", None)
         rating = body.get("rating", None)
+        search_term = body.get('search', None)
 
         try:
-            new_book = Book(title=title, author=author, rating=rating)
-            new_book.insert()
+            if search_term:
+                books = Book.query.filter(
+                    Book.author.ilike(f'%{search_term}%') | 
+                    Book.title.ilike(f'%{search_term}%')).all()
+                found_books = paginator(request, books)
 
-            all_books = Book.query.order_by(Book.id).all()
-            page_books = paginator(request, all_books)
+                return jsonify({
+                    "success": True,
+                    "books": found_books,
+                    "total_books": len(found_books)
+                    })
+            else:
+                new_book = Book(title=title, author=author, rating=rating)
+                new_book.insert()
 
-            return jsonify({
-                "success": True,
-                "created": new_book.id,
-                "books": page_books,
-                "total_books": len(all_books)
-            })
+                all_books = Book.query.order_by(Book.id).all()
+                page_books = paginator(request, all_books)
+
+                return jsonify({
+                    "success": True,
+                    "created": new_book.id,
+                    "books": page_books,
+                    "total_books": len(all_books)
+                })
         except:
             abort(422)
+
+    # @app.route('/books/search', methods=['GET'])
+    # def search_books():
+    #     search_term = request.args.get('search')
+
+    #     books = Book.query.filter(
+    #         Book.author.ilike(f'%{search_term}%') | 
+    #         Book.title.ilike(f'%{search_term}%')).all()
+    #     found_books = [book.format() for book in books]
+
+    #     return jsonify({
+    #         "success": True,
+    #         "books": found_books,
+    #         "total_books": len(found_books)
+    #         })
     
     @app.errorhandler(404)
     def not_found(error):
