@@ -51,7 +51,7 @@ class BookTestCase(unittest.TestCase):
         self.assertFalse(data['success'])
 
     def test_search_function(self):
-        res = self.client().get('/books/search?search=anansi')
+        res = self.client().post("/books", json={"search": "Novel"})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -60,7 +60,7 @@ class BookTestCase(unittest.TestCase):
         self.assertTrue(data['total_books'])
 
     def test_search_function_empty_result(self):
-        res = self.client().get('/books/search?search=ra')
+        res = self.client().post("/books", json={"search": "applejacks"})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
