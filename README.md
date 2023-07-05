@@ -44,7 +44,7 @@ In order to run tests navigate to the backend folder and run the following comma
 dropdb bookshelf_test
 createdb bookshelf_test
 psql bookshelf_test < books.psql
-python test_flaskr.py
+python tests.py
 ```
 
 The first time you run the tests, omit the dropdb command.
@@ -275,4 +275,4 @@ Response:
 ```
 
 ## Authors
-This project was authored by myself, as an extension of the original [Udacity provided repository](https://github.com/udacity/cd0037-API-Development-and-Documentation-exercises/tree/master/1_Requests_Starter).
+This project was authored by myself, [@rainfidelis](https://github.com/rainfidelis), as an extension of the original [Udacity provided repository](https://github.com/udacity/cd0037-API-Development-and-Documentation-exercises/tree/master/1_Requests_Starter).
