@@ -2,3 +2,5 @@
 Pipfile**
 .vscode/
 **/node_modules/
+**/.env
+**/*.zip

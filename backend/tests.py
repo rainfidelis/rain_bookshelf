@@ -1,6 +1,7 @@
 import unittest
 import json
 from flask_sqlalchemy import SQLAlchemy
+from decouple import config
 
 from flaskr import create_app
 from models import setup_db, Book
@@ -13,10 +14,15 @@ class BookTestCase(unittest.TestCase):
         """Define test variables and initialize app."""
         self.app = create_app()
         self.client = self.app.test_client
+
         self.database_name = "bookshelf_test"
-        self.database_path = "postgresql://{}:{}@{}/{}".format(
-            "rain", "RainBoy#$96", "localhost:5432", self.database_name
-        )
+        self.database_user = config('DATABASE_USER')
+        self.database_password = config('DATABASE_PASSWORD')
+        self.database_host = config('DATABASE_HOST')
+        self.database_port = config('DATABASE_PORT')
+        self.database_path = "postgresql://{}:{}@{}:{}/{}".format(
+            self.database_user, self.database_password, self.database_host,
+            self.database_port, self.database_name)
         setup_db(self.app, self.database_path)
 
         self.new_book = {"title": "Anansi Boys",
